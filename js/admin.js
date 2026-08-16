@@ -1,18 +1,33 @@
 /**
- * 📊 AdminManager - 교사용 관리자 모달, 목록 조회, 필터/검색, 엑셀 다운로드 및 인쇄 모듈
+ * 📊 AdminManager - 교사용 관리자 모달, 목록 조회, 필터/검색, Supabase 클라우드 연동, 비밀번호 변경 및 엑셀 내보내기 모듈
  */
 class AdminManager {
   constructor(storageKey = 'church_newcomer_records') {
     this.storageKey = storageKey;
+    this.pwdStorageKey = 'church_admin_password';
     this.modal = document.getElementById('adminModal');
     this.authModal = document.getElementById('adminAuthModal');
+    this.settingsModal = document.getElementById('adminSettingsModal');
     this.tbody = document.getElementById('adminTableBody');
     this.searchInput = document.getElementById('adminSearchInput');
     this.filterTabs = document.querySelectorAll('.tab-btn');
     this.currentGradeFilter = 'all';
-    this.adminPassword = '1234'; // 기본 비밀번호
+    this.defaultAdminPassword = '1234'; // 기본 비밀번호
+    this.cachedRecords = [];
 
     this.bindEvents();
+  }
+
+  getAdminPassword() {
+    return localStorage.getItem(this.pwdStorageKey) || this.defaultAdminPassword;
+  }
+
+  setAdminPassword(newPwd) {
+    if (newPwd && newPwd.trim().length > 0) {
+      localStorage.setItem(this.pwdStorageKey, newPwd.trim());
+      return true;
+    }
+    return false;
   }
 
   bindEvents() {
@@ -34,15 +49,49 @@ class AdminManager {
       authForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const pwdInput = document.getElementById('adminPwdInput');
-        if (pwdInput.value === this.adminPassword) {
+        const currentPwd = this.getAdminPassword();
+        if (pwdInput.value === currentPwd) {
           pwdInput.value = '';
           this.closeAllModals();
           this.openDashboard();
         } else {
-          alert('비밀번호가 일치하지 않습니다. (기본: 1234)');
+          alert('비밀번호가 일치하지 않습니다.');
           pwdInput.focus();
         }
       });
+    }
+
+    // 설정 모달 열기 버튼
+    const btnOpenSettings = document.getElementById('btnOpenDbSettings');
+    if (btnOpenSettings) {
+      btnOpenSettings.addEventListener('click', () => this.openSettings());
+    }
+
+    // 설정 저장 폼 (Supabase 설정 + 관리자 비밀번호 변경)
+    const formSettings = document.getElementById('supabaseConfigForm');
+    if (formSettings) {
+      formSettings.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const urlInput = document.getElementById('inputSupabaseUrl');
+        const keyInput = document.getElementById('inputSupabaseKey');
+        const newPwdInput = document.getElementById('inputNewAdminPwd');
+
+        window.supabaseService.saveConfig(urlInput.value, keyInput.value);
+
+        if (newPwdInput && newPwdInput.value.trim().length > 0) {
+          this.setAdminPassword(newPwdInput.value.trim());
+        }
+
+        alert('설정이 안전하게 저장되었습니다!');
+        this.closeAllModals();
+        this.openDashboard();
+      });
+    }
+
+    // 새로고침 버튼
+    const btnRefresh = document.getElementById('btnRefreshRecords');
+    if (btnRefresh) {
+      btnRefresh.addEventListener('click', () => this.loadAndRender());
     }
 
     // 학년 필터 탭
@@ -88,20 +137,37 @@ class AdminManager {
     }
   }
 
-  openDashboard() {
+  openSettings() {
+    this.closeAllModals();
+    if (this.settingsModal) {
+      const config = window.supabaseService.getConfig();
+      const urlInput = document.getElementById('inputSupabaseUrl');
+      const keyInput = document.getElementById('inputSupabaseKey');
+      const newPwdInput = document.getElementById('inputNewAdminPwd');
+
+      if (urlInput) urlInput.value = config.url || '';
+      if (keyInput) keyInput.value = config.anonKey || '';
+      if (newPwdInput) newPwdInput.value = this.getAdminPassword();
+
+      this.settingsModal.classList.add('active');
+    }
+  }
+
+  async openDashboard() {
     this.closeAllModals();
     if (this.modal) {
       this.modal.classList.add('active');
-      this.renderTable();
+      await this.loadAndRender();
     }
   }
 
   closeAllModals() {
     if (this.modal) this.modal.classList.remove('active');
     if (this.authModal) this.authModal.classList.remove('active');
+    if (this.settingsModal) this.settingsModal.classList.remove('active');
   }
 
-  getRecords() {
+  getLocalRecords() {
     try {
       const data = localStorage.getItem(this.storageKey);
       return data ? JSON.parse(data) : [];
@@ -111,7 +177,7 @@ class AdminManager {
     }
   }
 
-  saveRecords(records) {
+  saveLocalRecords(records) {
     try {
       localStorage.setItem(this.storageKey, JSON.stringify(records));
     } catch (e) {
@@ -119,9 +185,38 @@ class AdminManager {
     }
   }
 
+  async loadAndRender() {
+    this.updateDbStatusBadge();
+
+    if (window.supabaseService.isConfigured()) {
+      const res = await window.supabaseService.fetchNewcomers();
+      if (res.success) {
+        this.cachedRecords = res.data;
+      } else {
+        // Fallback to local
+        this.cachedRecords = this.getLocalRecords();
+      }
+    } else {
+      this.cachedRecords = this.getLocalRecords();
+    }
+
+    this.renderTable();
+  }
+
+  updateDbStatusBadge() {
+    const badge = document.getElementById('dbStatusBadge');
+    if (!badge) return;
+
+    if (window.supabaseService.isConfigured()) {
+      badge.innerHTML = '☁️ <span style="color:#10B981; font-weight:700;">Supabase 클라우드 연결됨</span>';
+    } else {
+      badge.innerHTML = '💾 <span style="color:#F59E0B; font-weight:700;">로컬 저장소 모드 (미연동)</span>';
+    }
+  }
+
   renderTable() {
     if (!this.tbody) return;
-    const records = this.getRecords();
+    const records = this.cachedRecords;
     const query = this.searchInput ? this.searchInput.value.trim().toLowerCase() : '';
 
     // 필터링 적용
@@ -172,15 +267,22 @@ class AdminManager {
     `).join('');
   }
 
-  deleteRecord(id) {
+  async deleteRecord(id) {
     if (!confirm('이 새신자 등록 정보를 삭제하시겠습니까?')) return;
-    const records = this.getRecords().filter((r) => r.id !== id);
-    this.saveRecords(records);
-    this.renderTable();
+
+    if (window.supabaseService.isConfigured()) {
+      await window.supabaseService.deleteNewcomer(id);
+    }
+
+    // Always clean local as well
+    const local = this.getLocalRecords().filter((r) => r.id !== id);
+    this.saveLocalRecords(local);
+
+    await this.loadAndRender();
   }
 
   exportToCSV() {
-    const records = this.getRecords();
+    const records = this.cachedRecords;
     if (records.length === 0) {
       alert('다운로드할 새신자 데이터가 없습니다.');
       return;
@@ -222,58 +324,38 @@ class AdminManager {
     document.body.removeChild(link);
   }
 
-  addSampleData() {
-    const sampleRecords = [
-      {
-        id: 'sample_' + Date.now() + '_1',
-        createdAt: '2026-08-16 10:30',
-        childName: '김예준',
-        gender: '남아',
-        birthDate: '2016-05-12',
-        grade: '4',
-        schoolName: '은혜초등학교',
-        avatar: '🦁',
-        parentName: '김성민',
-        parentRelation: '부',
-        parentPhone: '010-1234-5678',
-        childPhone: '010-9876-5432',
-        address: '은혜동 101동',
-        busUsage: '이용함 (1호차)',
-        guidePerson: '이하은',
-        churchExp: '처음 교회에 옴',
-        baptism: '유아세례',
-        talents: ['찬양', '악기(피아노)'],
-        prayerRequest: '선생님과 친구들과 즐겁게 신앙생활 하기를 원해요.',
-        signature: ''
-      },
-      {
-        id: 'sample_' + Date.now() + '_2',
-        createdAt: '2026-08-16 11:15',
-        childName: '박서연',
-        gender: '여아',
-        birthDate: '2017-09-24',
-        grade: '3',
-        schoolName: '믿음초등학교',
-        avatar: '🐰',
-        parentName: '이수진',
-        parentRelation: '모',
-        parentPhone: '010-5555-7777',
-        childPhone: '',
-        address: '믿음동 203동',
-        busUsage: '직접 등교',
-        guidePerson: '최민준 (친구)',
-        churchExp: '이전에 다닌 적 있음',
-        baptism: '미세례',
-        talents: ['율동/댄스', '미술/만들기'],
-        prayerRequest: '달란트 잔치와 성경학교에 참여하고 싶어요.',
-        signature: ''
-      }
-    ];
+  async addSampleData() {
+    const sampleRecord = {
+      id: 'sample_' + Date.now(),
+      createdAt: new Date().toLocaleString('ko-KR'),
+      childName: '김예준',
+      gender: '남아',
+      birthDate: '2016-05-12',
+      grade: '4',
+      schoolName: '은혜초등학교',
+      avatar: '🦁',
+      parentName: '김성민',
+      parentRelation: '부',
+      parentPhone: '010-1234-5678',
+      childPhone: '010-9876-5432',
+      address: '은혜동 101동',
+      busUsage: '이용함 (1호차)',
+      guidePerson: '이하은',
+      churchExp: '처음 교회에 옴',
+      baptism: '유아세례',
+      talents: ['찬양', '악기(피아노)'],
+      prayerRequest: '선생님과 친구들과 즐겁게 신앙생활 하기를 원해요.',
+      signature: ''
+    };
 
-    const current = this.getRecords();
-    this.saveRecords([...sampleRecords, ...current]);
-    this.renderTable();
-    alert('체험용 샘플 데이터 2건이 등록되었습니다.');
+    if (window.supabaseService.isConfigured()) {
+      await window.supabaseService.insertNewcomer(sampleRecord);
+    }
+
+    const current = this.getLocalRecords();
+    this.saveLocalRecords([sampleRecord, ...current]);
+    await this.loadAndRender();
+    alert('체험용 샘플 데이터가 등록되었습니다.');
   }
 }
 
