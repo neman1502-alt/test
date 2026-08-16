@@ -1,5 +1,5 @@
 /**
- * 🌟 ChurchNewcomerApp - 초등부 새신자 등록 메인 애플리케이션 로직
+ * 🌟 ChurchNewcomerApp - 초등부 새신자 등록 메인 애플리케이션 로직 (Supabase 클라우드 연동 지원)
  */
 document.addEventListener('DOMContentLoaded', () => {
   // Global Submodules Initialization
@@ -286,10 +286,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Submit Form
+  // Submit Form (Save to Supabase & LocalStorage)
   if (btnSubmit) {
-    btnSubmit.addEventListener('click', () => {
+    btnSubmit.addEventListener('click', async () => {
       if (!validateCurrentStep()) return;
+
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = '<span>⏳ 저장 중...</span>';
 
       const record = {
         ...formData,
@@ -303,10 +306,23 @@ document.addEventListener('DOMContentLoaded', () => {
         })
       };
 
-      // Save to LocalStorage
-      const records = window.adminManager.getRecords();
-      records.unshift(record);
-      window.adminManager.saveRecords(records);
+      // 1. Supabase Cloud DB 저장 시도
+      if (window.supabaseService && window.supabaseService.isConfigured()) {
+        const res = await window.supabaseService.insertNewcomer(record);
+        if (res.success) {
+          console.log('Saved to Supabase successfully!');
+        } else {
+          console.warn('Supabase save failed, fallback to local:', res.message);
+        }
+      }
+
+      // 2. LocalStorage 항상 백업 저장
+      const localRecords = window.adminManager.getLocalRecords();
+      localRecords.unshift(record);
+      window.adminManager.saveLocalRecords(localRecords);
+
+      btnSubmit.disabled = false;
+      btnSubmit.innerHTML = '<span>🎉 등록 완료하기</span>';
 
       // Render Complete Screen
       renderCompleteScreen(record);
