@@ -257,8 +257,15 @@
       <!-- STEP 4: 동의 & 서명 -->
       <section class="step-content" id="stepContent4">
         <div class="step-header">
-          <h2 class="step-heading"><span>📝</span> 개인정보 동의 및 확인 서명</h2>
-          <p class="step-subheading">만 14세 미만 아동 보호를 위한 법정대리인 확인 절차입니다.</p>
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <h2 class="step-heading"><span>📝</span> 개인정보 동의 및 확인 서명</h2>
+              <p class="step-subheading">만 14세 미만 아동 보호를 위한 법정대리인 확인 절차입니다.</p>
+            </div>
+            <a href="privacy.html" target="_blank" style="font-size:12px; font-weight:700; color:var(--secondary-sky); text-decoration:underline; white-space:nowrap; padding:4px 8px; background:#F0F7FF; border-radius:6px;">
+              📄 전문 보기
+            </a>
+          </div>
         </div>
 
         <div class="privacy-box">
@@ -342,6 +349,14 @@
       </div>
     </section>
 
+    <!-- App Footer -->
+    <footer style="text-align:center; margin-top:24px; font-size:12px; color:var(--text-light);">
+      <p>© 2026 꿈나무 교회학교 초등부. All rights reserved.</p>
+      <p style="margin-top:4px;">
+        <a href="privacy.html" target="_blank" style="color:var(--text-muted); text-decoration:underline;">개인정보 처리방침 및 동의서 전문 보기</a>
+      </p>
+    </footer>
+
   </div>
 
   <!-- Admin Auth Modal -->
@@ -366,12 +381,57 @@
     </div>
   </div>
 
+  <!-- Admin Settings Modal (Supabase Cloud Config & Password Change) -->
+  <div class="modal-overlay" id="adminSettingsModal">
+    <div class="modal-card" style="max-width:480px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><span>⚙️</span> DB 및 관리자 보안 설정</h3>
+        <button type="button" class="modal-close-btn" aria-label="닫기">×</button>
+      </div>
+      <form id="supabaseConfigForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="inputNewAdminPwd">🔑 교사용 관리자 비밀번호 변경</label>
+            <input type="text" id="inputNewAdminPwd" class="input-text" placeholder="새 비밀번호 입력 (예: 5678)" required>
+            <small style="color:var(--text-muted); font-size:12px; display:block; margin-top:4px;">
+              교사 전용 대시보드 로그인 시 사용할 비밀번호입니다.
+            </small>
+          </div>
+
+          <hr style="margin:16px 0; border:0; border-top:1px dashed var(--border-soft);">
+
+          <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">
+            <strong>☁️ Supabase 클라우드 연동 정보</strong> (자동 내장됨)
+          </p>
+          <div class="form-group">
+            <label class="form-label" for="inputSupabaseUrl">Project URL</label>
+            <input type="url" id="inputSupabaseUrl" class="input-text" placeholder="https://your-project.supabase.co" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="inputSupabaseKey">Publishable Key</label>
+            <input type="text" id="inputSupabaseKey" class="input-text" placeholder="sb_publishable_..." required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-prev modal-close-btn" style="flex:1;">닫기</button>
+          <button type="submit" class="btn btn-next" style="flex:1;">설정 저장하기</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Admin Dashboard Modal -->
   <div class="modal-overlay" id="adminModal">
     <div class="modal-card">
       <div class="modal-header">
-        <h3 class="modal-title"><span>📊</span> 초등부 새신자 관리 대시보드</h3>
-        <button type="button" class="modal-close-btn" aria-label="닫기">×</button>
+        <div>
+          <h3 class="modal-title"><span>📊</span> 초등부 새신자 관리 대시보드</h3>
+          <div id="dbStatusBadge" style="font-size:12px; margin-top:4px;"></div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button type="button" class="action-btn-sm" id="btnOpenDbSettings">⚙️ 설정(비밀번호/DB)</button>
+          <button type="button" class="modal-close-btn" aria-label="닫기">×</button>
+        </div>
       </div>
       <div class="modal-body">
         
@@ -381,8 +441,9 @@
             <span class="stat-pill">총 등록: <strong id="statTotalCount">0</strong>명</span>
             <span class="stat-pill">조회: <strong id="statFilteredCount">0</strong>명</span>
           </div>
-          <div>
+          <div style="display:flex; gap:8px;">
             <input type="text" id="adminSearchInput" class="admin-search-input" placeholder="이름/인도자/연락처 검색...">
+            <button type="button" class="action-btn-sm" id="btnRefreshRecords">🔄 새로고침</button>
           </div>
         </div>
 
@@ -439,7 +500,11 @@
   <!-- Toast Container -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- Scripts -->
+  <!-- Supabase JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Local Submodules -->
+  <script src="js/supabaseClient.js"></script>
   <script src="js/signature.js"></script>
   <script src="js/confetti.js"></script>
   <script src="js/admin.js"></script>
