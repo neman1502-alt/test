@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>초등부 새신자 등록카드 | 꿈나무 교회학교</title>
+  <meta name="description" content="초등부 교회학교 모바일 및 태블릿 새신자 등록 스마트 시스템">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌱</text></svg>">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand-badge">
+        <span class="icon">🌱</span>
+        <span>꿈나무 교회학교 초등부</span>
+      </div>
+      <button type="button" class="admin-trigger-btn" id="btnOpenAdmin" aria-label="교사용 관리자 모드 열기">
+        <span>🔐</span>
+        <span>교사용 관리</span>
+      </button>
+    </header>
+
+    <!-- Hero Card -->
+    <section class="hero-card">
+      <span class="hero-tag">Welcome to Kids Church</span>
+      <h1 class="hero-title">
+        예수님의 사랑으로<br>
+        <span class="highlight">새 친구를 환영하고 축복해요!</span>
+      </h1>
+      <p class="hero-desc">
+        초등부 교회학교에 처음 온 친구들을 환영합니다.<br>
+        아래 단계에 따라 등록 카드를 작성해 주세요 ✨
+      </p>
+    </section>
+
+    <!-- Stepper Container -->
+    <nav class="stepper-container" aria-label="등록 단계">
+      <div class="stepper-track">
+        <div class="stepper-progress-fill" id="stepperProgressFill"></div>
+        
+        <div class="step-item active" data-step="1">
+          <div class="step-circle">1</div>
+          <span class="step-title">어린이 정보</span>
+        </div>
+        <div class="step-item" data-step="2">
+          <div class="step-circle">2</div>
+          <span class="step-title">보호자 정보</span>
+        </div>
+        <div class="step-item" data-step="3">
+          <div class="step-circle">3</div>
+          <span class="step-title">신앙 & 인도자</span>
+        </div>
+        <div class="step-item" data-step="4">
+          <div class="step-circle">4</div>
+          <span class="step-title">동의 & 서명</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Multi-Step Form Card -->
+    <main class="form-card">
+      
+      <!-- STEP 1: 어린이 기본 정보 -->
+      <section class="step-content active" id="stepContent1">
+        <div class="step-header">
+          <h2 class="step-heading"><span>👶</span> 어린이 기본 정보</h2>
+          <p class="step-subheading">새로 온 친구의 기본 정보를 입력해 주세요.</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="inputChildName">
+            어린이 성명 <span class="required-dot">*</span>
+          </label>
+          <input type="text" id="inputChildName" class="input-text" placeholder="예: 김예준" maxlength="10" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            성별 <span class="required-dot">*</span>
+          </label>
+          <div class="chip-grid grid-cols-2">
+            <button type="button" class="chip-btn chip-gender selected" data-value="남아">
+              <span class="chip-icon">👦</span> 남아 (Boy)
+            </button>
+            <button type="button" class="chip-btn chip-gender" data-value="여아">
+              <span class="chip-icon">👧</span> 여아 (Girl)
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="inputBirthDate">
+            생년월일 <span class="required-dot">*</span>
+          </label>
+          <input type="date" id="inputBirthDate" class="input-text" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            현재 학년 <span class="required-dot">*</span>
+          </label>
+          <div class="chip-grid grid-cols-6">
+            <button type="button" class="chip-btn chip-grade selected" data-value="1">1학년</button>
+            <button type="button" class="chip-btn chip-grade" data-value="2">2학년</button>
+            <button type="button" class="chip-btn chip-grade" data-value="3">3학년</button>
+            <button type="button" class="chip-btn chip-grade" data-value="4">4학년</button>
+            <button type="button" class="chip-btn chip-grade" data-value="5">5학년</button>
+            <button type="button" class="chip-btn chip-grade" data-value="6">6학년</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="inputSchoolName">
+            재학 중인 초등학교 <span class="helper">(선택)</span>
+          </label>
+          <input type="text" id="inputSchoolName" class="input-text" placeholder="예: 은혜초등학교">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            마음에 드는 캐릭터 아바타 <span class="helper">(선택)</span>
+          </label>
+          <div class="avatar-grid">
+            <div class="avatar-item selected" data-avatar="🦁" title="용감한 사자">🦁</div>
+            <div class="avatar-item" data-avatar="🐰" title="귀여운 토끼">🐰</div>
+            <div class="avatar-item" data-avatar="🐻" title="다정한 곰돌이">🐻</div>
+            <div class="avatar-item" data-avatar="🐑" title="온순한 어린양">🐑</div>
+            <div class="avatar-item" data-avatar="🌟" title="빛나는 별">🌟</div>
+            <div class="avatar-item" data-avatar="🕊️" title="평화의 비둘기">🕊️</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 2: 보호자 및 연락처 -->
+      <section class="step-content" id="stepContent2">
+        <div class="step-header">
+          <h2 class="step-heading"><span>👨‍👩‍👧</span> 보호자 및 연락처 정보</h2>
+          <p class="step-subheading">교회 소식 안내 및 심방을 위한 연락처입니다.</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="inputParentName">
+            학부모(보호자) 성명 <span class="required-dot">*</span>
+          </label>
+          <input type="text" id="inputParentName" class="input-text" placeholder="예: 김성민" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            어린이와의 관계 <span class="required-dot">*</span>
+          </label>
+          <div class="chip-grid grid-cols-4 grid-wrap">
+            <button type="button" class="chip-btn chip-relation selected" data-value="모">어머니 (모)</button>
+            <button type="button" class="chip-btn chip-relation" data-value="부">아버지 (부)</button>
+            <button type="button" class="chip-btn chip-relation" data-value="조부모">조부모</button>
+            <button type="button" class="chip-btn chip-relation" data-value="기타">기타 보호자</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="inputParentPhone">
+            보호자 휴대전화 번호 <span class="required-dot">*</span>
+          </label>
+          <input type="tel" id="inputParentPhone" class="input-text" placeholder="010-0000-0000" inputmode="numeric" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="inputChildPhone">
+            어린이 본인 휴대전화 <span class="helper">(선택 / 없을 시 비워둠)</span>
+          </label>
+          <input type="tel" id="inputChildPhone" class="input-text" placeholder="010-0000-0000" inputmode="numeric">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="inputAddress">
+            거주 지역 / 아파트 <span class="helper">(선택 / 차량 운행 참고용)</span>
+          </label>
+          <input type="text" id="inputAddress" class="input-text" placeholder="예: 은혜동 101동">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            교회 차량 운행 이용 여부 <span class="helper">(선택)</span>
+          </label>
+          <div class="chip-grid grid-cols-2">
+            <button type="button" class="chip-btn chip-bus selected" data-value="직접 등교">🚶 직접 등교 / 자가용</button>
+            <button type="button" class="chip-btn chip-bus" data-value="차량 이용 희망">🚌 교회 버스 이용 희망</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 3: 신앙 배경 & 인도자 -->
+      <section class="step-content" id="stepContent3">
+        <div class="step-header">
+          <h2 class="step-heading"><span>✝️</span> 신앙 배경 및 인도자</h2>
+          <p class="step-subheading">어린이를 더 잘 이해하고 축복하기 위한 정보입니다.</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="inputGuidePerson">
+            인도자 (전도해 준 친구 또는 선생님) <span class="helper">(선택)</span>
+          </label>
+          <input type="text" id="inputGuidePerson" class="input-text" placeholder="예: 이하은 (친구 이름) 또는 스스로 방문">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            교회 출석 경험 <span class="required-dot">*</span>
+          </label>
+          <div class="chip-grid grid-cols-2">
+            <button type="button" class="chip-btn chip-church-exp selected" data-value="처음 교회에 옴">🌱 처음 교회에 옴</button>
+            <button type="button" class="chip-btn chip-church-exp" data-value="이전에 다닌 적 있음">📖 이전에 다닌 적 있음</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            세례 여부 <span class="required-dot">*</span>
+          </label>
+          <div class="chip-grid grid-cols-3 grid-wrap">
+            <button type="button" class="chip-btn chip-baptism selected" data-value="미세례">미세례</button>
+            <button type="button" class="chip-btn chip-baptism" data-value="유아세례">유아세례 받음</button>
+            <button type="button" class="chip-btn chip-baptism" data-value="입교/세례">입교 / 세례</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            관심 분야 및 달란트 <span class="helper">(다중 선택 가능)</span>
+          </label>
+          <div class="chip-grid grid-wrap">
+            <button type="button" class="chip-btn chip-talent" data-value="찬양">🎵 찬양</button>
+            <button type="button" class="chip-btn chip-talent" data-value="악기">🎹 악기 연주</button>
+            <button type="button" class="chip-btn chip-talent" data-value="율동/댄스">💃 율동/댄스</button>
+            <button type="button" class="chip-btn chip-talent" data-value="미술/만들기">🎨 미술/만들기</button>
+            <button type="button" class="chip-btn chip-talent" data-value="방송/미디어">🎬 방송/미디어</button>
+            <button type="button" class="chip-btn chip-talent" data-value="운동">⚽ 운동</button>
+            <button type="button" class="chip-btn chip-talent" data-value="성경암송">📖 말씀/암송</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="inputPrayerRequest">
+            기도제목 / 선생님께 바라는 점 <span class="helper">(선택)</span>
+          </label>
+          <textarea id="inputPrayerRequest" class="input-textarea" placeholder="건강 특이사항(알레르기 등)이나 나누고 싶은 기도제목을 편하게 적어주세요."></textarea>
+        </div>
+      </section>
+
+      <!-- STEP 4: 동의 & 서명 -->
+      <section class="step-content" id="stepContent4">
+        <div class="step-header">
+          <h2 class="step-heading"><span>📝</span> 개인정보 동의 및 확인 서명</h2>
+          <p class="step-subheading">만 14세 미만 아동 보호를 위한 법정대리인 확인 절차입니다.</p>
+        </div>
+
+        <div class="privacy-box">
+          <h4>개인정보 수집 및 이용 동의 (만 14세 미만 아동)</h4>
+          <p>
+            1. <strong>수집 목적</strong>: 초등부 교회학교 등록, 공과/반 배정, 출결 및 심방 관리, 교회 행사 및 소식 안내<br>
+            2. <strong>수집 항목</strong>: 어린이 성명, 성별, 생년월일, 학년, 학교, 보호자 성명/연락처, 주소, 신앙 정보<br>
+            3. <strong>보유 및 이용 기간</strong>: 초등부 재학 기간 및 교회학교 정착 관리 기간 동안 보유하며, 탈퇴 또는 삭제 요청 시 즉시 파기합니다.<br>
+            4. 귀하는 개인정보 수집에 거부할 권리가 있으나, 거부 시 등록 및 심방 서비스 제공이 제한될 수 있습니다.
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label class="custom-checkbox-label" id="labelAgreement">
+            <input type="checkbox" id="checkAgreement" required>
+            <span>[필수] 본인은 만 14세 미만 아동의 법정대리인으로서 위 개인정보 수집 및 이용에 동의합니다.</span>
+          </label>
+        </div>
+
+        <div class="signature-wrapper">
+          <label class="form-label">
+            학부모(보호자) 확인 서명 <span class="required-dot">*</span>
+          </label>
+          <div class="canvas-container">
+            <canvas id="signatureCanvas"></canvas>
+            <div class="canvas-placeholder" id="signaturePlaceholder">
+              <span>✍️</span> 여기에 손가락이나 펜으로 서명해 주세요
+            </div>
+          </div>
+          <div class="signature-actions">
+            <button type="button" class="btn-clear-sign" id="btnClearSignature">
+              <span>🔄</span> 서명 지우기
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Action Buttons -->
+      <div class="form-actions">
+        <button type="button" class="btn btn-prev" id="btnPrevStep" style="display:none;">
+          <span>이전</span>
+        </button>
+        <button type="button" class="btn btn-next" id="btnNextStep">
+          <span>다음 단계</span> <span>➔</span>
+        </button>
+        <button type="button" class="btn btn-submit" id="btnSubmitForm" style="display:none;">
+          <span>🎉 등록 완료하기</span>
+        </button>
+      </div>
+
+    </main>
+
+    <!-- Complete Welcome View (Step 5) -->
+    <section class="form-card complete-screen" id="completeViewArea" style="display:none;">
+      <div class="celebration-badge" id="completeAvatar">🦁</div>
+      <h2 class="complete-title">
+        <span class="complete-name" id="completeChildName">예준</span> 친구,<br>
+        예수님의 이름으로 환영해요! 🎉
+      </h2>
+      <p class="hero-desc" style="margin-top:8px;">
+        꿈나무 교회학교 초등부의 가족이 된 것을 진심으로 축하합니다!
+      </p>
+
+      <div class="bible-verse-card">
+        <span class="verse-icon">📖</span>
+        <p class="bible-verse-text">
+          "어린 아이들이 내게 오는 것을 용납하고 금하지 말라 하나님의 나라가 이런 자의 것이니라"
+        </p>
+        <p class="bible-verse-ref">- 마가복음 10:14 -</p>
+      </div>
+
+      <div class="gift-alert">
+        <span>🎁</span>
+        <span>환영 선물이 준비되어 있어요! 안내 교사에게 말씀해 주세요.</span>
+      </div>
+
+      <div>
+        <button type="button" class="btn btn-next" id="btnRestartRegistration" style="max-width:240px; margin:0 auto;">
+          <span>🌱 새로운 등록하기</span>
+        </button>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Admin Auth Modal -->
+  <div class="modal-overlay" id="adminAuthModal">
+    <div class="modal-card" style="max-width:380px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><span>🔐</span> 관리자 인증</h3>
+        <button type="button" class="modal-close-btn" aria-label="닫기">×</button>
+      </div>
+      <form id="adminAuthForm">
+        <div class="modal-body">
+          <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">
+            교사용 관리자 페이지 접근을 위해 비밀번호를 입력해 주세요. (기본: 1234)
+          </p>
+          <input type="password" id="adminPwdInput" class="input-text" placeholder="비밀번호 입력" required autofocus>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-prev modal-close-btn" style="flex:1;">취소</button>
+          <button type="submit" class="btn btn-next" style="flex:1;">확인</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard Modal -->
+  <div class="modal-overlay" id="adminModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title"><span>📊</span> 초등부 새신자 관리 대시보드</h3>
+        <button type="button" class="modal-close-btn" aria-label="닫기">×</button>
+      </div>
+      <div class="modal-body">
+        
+        <!-- Toolbar & Stats -->
+        <div class="admin-toolbar">
+          <div class="admin-stats">
+            <span class="stat-pill">총 등록: <strong id="statTotalCount">0</strong>명</span>
+            <span class="stat-pill">조회: <strong id="statFilteredCount">0</strong>명</span>
+          </div>
+          <div>
+            <input type="text" id="adminSearchInput" class="admin-search-input" placeholder="이름/인도자/연락처 검색...">
+          </div>
+        </div>
+
+        <!-- Grade Filter Tabs -->
+        <div class="admin-filter-tabs" style="margin-bottom:14px;">
+          <button type="button" class="tab-btn active" data-grade="all">전체 학년</button>
+          <button type="button" class="tab-btn" data-grade="1">1학년</button>
+          <button type="button" class="tab-btn" data-grade="2">2학년</button>
+          <button type="button" class="tab-btn" data-grade="3">3학년</button>
+          <button type="button" class="tab-btn" data-grade="4">4학년</button>
+          <button type="button" class="tab-btn" data-grade="5">5학년</button>
+          <button type="button" class="tab-btn" data-grade="6">6학년</button>
+        </div>
+
+        <!-- Records Table -->
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>어린이 (성별)</th>
+                <th>학년</th>
+                <th>생년월일</th>
+                <th>보호자 (연락처)</th>
+                <th>인도자</th>
+                <th>관심 분야</th>
+                <th>서명</th>
+                <th>관리</th>
+              </tr>
+            </thead>
+            <tbody id="adminTableBody">
+              <!-- Dynamically Populated -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <div>
+          <button type="button" class="action-btn-sm" id="btnAddSampleData">✨ 체험용 샘플 추가</button>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="btn btn-prev" id="btnPrintTable" style="flex:0 0 auto; min-height:40px; padding:8px 16px;">
+            🖨️ 인쇄
+          </button>
+          <button type="button" class="btn btn-next" id="btnExportExcel" style="flex:0 0 auto; min-height:40px; padding:8px 18px;">
+            📥 엑셀(CSV) 다운로드
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script src="js/signature.js"></script>
+  <script src="js/confetti.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
